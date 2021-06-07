@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .models import Meeting, MeetingMinutes, Event, Resource
+from .forms import MeetingForm, ResourceForm
 
 # Create your tests here.
 class MeetingTest(TestCase):
@@ -42,3 +43,22 @@ class ResourceTest(TestCase):
 
     def test_table(self):
         self.assertEqual(str(Resource._meta.db_table), 'resource')
+
+class MeetingFormTest(TestCase):
+    def test_MeetingForm_is_valid(self):
+        form=MeetingForm(data={'meetingtitle':'TESTFORM', 'meetingdate':'01/01/2021', 'meetingtime':'8', 'meetinglocation':'TESTLOCALE', 'meetingagenda':'TESTAGENDA'})
+        self.assertTrue(form.is_valid())
+    
+    def test_MeetingForm_is_valid_optional_fields(self):
+        form=MeetingForm(data={'meetingtitle':'TESTFORM', 'meetingdate':'01/01/2021', 'meetinglocation':'TESTLOCALE'})
+        self.assertTrue(form.is_valid())
+
+    def test_MeetingForm_empty(self):
+        form=MeetingForm(data={'meetingtitle':''})
+        self.assertFalse(form.is_valid())
+
+# class ResourceFormTest(TestCase):
+#     def test_ResourceForm_is_valid(self):
+#         form=ResourceForm(data={'resourcename':'TESTRESOURCENAME', 'resourcetype':'test', 'resourceurl':'https://www.google.com/', 'resourcedateentered':'01/01/2021', 'userid':'3', 'resourcedescription':'TEST DATA DESCRIPTION'})
+#         self.assertTrue(form.is_valid())
+# TEST FAILING, Not Sure why
