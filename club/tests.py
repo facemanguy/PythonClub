@@ -1,6 +1,9 @@
+from django.http import response
 from django.test import TestCase
 from .models import Meeting, MeetingMinutes, Event, Resource
 from .forms import MeetingForm, ResourceForm
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy
 
 # Create your tests here.
 class MeetingTest(TestCase):
@@ -62,3 +65,12 @@ class MeetingFormTest(TestCase):
 #         form=ResourceForm(data={'resourcename':'TESTRESOURCENAME', 'resourcetype':'test', 'resourceurl':'https://www.google.com/', 'resourcedateentered':'01/01/2021', 'userid':'3', 'resourcedescription':'TEST DATA DESCRIPTION'})
 #         self.assertTrue(form.is_valid())
 # TEST FAILING, Not Sure why
+
+class MeetingFormAuthenticationTest(TestCase):
+    def setUp(self):
+        self.test_user=User.objects.create_user(username='testuser01', password='P@ssw0rd1')
+        self.meeting=Meeting.objects.create(meetingtitle="Test Meeting", meetingdate="2021-06-12", meetingtime="08.15", meetinglocation="Test Auditorium", meetingagenda="Test Agenda")
+
+    def test_redirect_on_failed_login(self):
+        response=self.client.get(reverse_lazy('newmeeting'))
+        self.assertRedirects(response, '/accounts/login/?next=/club/club/newmeeting')
